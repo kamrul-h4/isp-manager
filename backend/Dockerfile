@@ -30,6 +30,8 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 # Copy application code
 COPY --chown=appuser:appuser . .
 
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+
 # Set permissions and switch to non-root user
 RUN chmod +x /app/entrypoint.prod.sh
 USER appuser
