@@ -1,5 +1,5 @@
 # Multi-stage build for Next.js application
-FROM node:20-alpine AS builder
+FROM node:22.18.0-alpine AS builder
 WORKDIR /app
 
 # Install dependencies
@@ -24,7 +24,7 @@ ENV NEXT_PUBLIC_APP_VERSION=$NEXT_PUBLIC_APP_VERSION
 RUN npm run build
 
 # Production image
-FROM node:20-alpine AS runner
+FROM node:22.18.0-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
