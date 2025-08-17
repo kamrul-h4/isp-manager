@@ -26,7 +26,9 @@ from customer.serializers.customer import (
     StatusToggleSerializer,
 )
 from customer.serializers.payment import PaymentListSerializer
-from customer.utils import toggle_ppp_user
+
+# from customer.utils import toggle_ppp_user
+from customer.helpers import Mikrotik
 
 
 class CustomerList(ListCreateAPIView):
@@ -42,18 +44,18 @@ class CustomerList(ListCreateAPIView):
 
     def get_queryset(self):
         queryset = Customer().get_all_actives().select_related("package")
-        
+
         # Text search filters
         search = self.request.query_params.get("search", None)
         if search:
             queryset = queryset.filter(
-                Q(name__icontains=search) |
-                Q(phone__icontains=search) |
-                Q(email__icontains=search) |
-                Q(username__icontains=search) |
-                Q(ip_address__icontains=search)
+                Q(name__icontains=search)
+                | Q(phone__icontains=search)
+                | Q(email__icontains=search)
+                | Q(username__icontains=search)
+                | Q(ip_address__icontains=search)
             )
-        
+
         # Individual filters
         name = self.request.query_params.get("name", None)
         username = self.request.query_params.get("username", None)
@@ -63,7 +65,7 @@ class CustomerList(ListCreateAPIView):
         is_active = self.request.query_params.get("is_active", None)
         is_free = self.request.query_params.get("is_free", None)
         connection_type = self.request.query_params.get("connection_type", None)
-        
+
         # Apply filters
         if is_free is not None:
             queryset = queryset.filter(is_free=is_free.lower() == "true")
@@ -132,7 +134,7 @@ class GenerateBill(APIView):
 
         # Step 1: Get all active customers
         active_customers = Customer.objects.filter(
-            is_active=True, is_free=False, package__price__gt=0
+            is_active=True, is_free=False
         ).select_related("package")
 
         # Step 2: Get customer IDs with existing payments for current month
@@ -256,7 +258,7 @@ class StatusToggle(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
         customer.is_active = is_active
-        success, message = toggle_ppp_user(username, not is_active)
+        success, message = Mikrotik.toggle_ppp_user(username, not is_active)
         if not success:
             return Response({"error": message}, status=status.HTTP_400_BAD_REQUEST)
 
