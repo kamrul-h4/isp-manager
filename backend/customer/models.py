@@ -13,6 +13,12 @@ from customer.choices import ConnectionType, PaymentMethod, Months
 class Package(NameDescriptionBaseModel):
     """Model representing a package."""
 
+    organization = models.ForeignKey(
+        "core.Organization",
+        on_delete=models.CASCADE,
+        related_name="packages",
+        help_text="The organization offering this package.",
+    )
     speed_mbps = models.PositiveIntegerField(
         help_text="Speed in Mbps for the package.", blank=True, default=10
     )
@@ -33,13 +39,21 @@ class Package(NameDescriptionBaseModel):
 
 
 class Customer(NameDescriptionBaseModel):
-    user = models.OneToOneField(
-        "core.User",
+    # user = models.OneToOneField(
+    #     "core.User",
+    #     on_delete=models.SET_NULL,
+    #     blank=True,
+    #     null=True,
+    #     verbose_name=("user"),
+    #     related_name="customer_user",
+    # )
+    organization = models.ForeignKey(
+        "core.Organization",
         on_delete=models.SET_NULL,
+        related_name="customers",
         blank=True,
         null=True,
-        verbose_name=("user"),
-        related_name="customer_user",
+        help_text="The organization this customer belongs to.",
     )
     phone = models.CharField(max_length=20, blank=True)
     secret_id = models.CharField(
@@ -91,6 +105,14 @@ class Customer(NameDescriptionBaseModel):
 class Payment(NameDescriptionBaseModel):
     """Model representing a payment."""
 
+    organization = models.ForeignKey(
+        "core.Organization",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="payments",
+        help_text="The organization receiving this payment.",
+    )
     customer = models.ForeignKey(
         Customer, on_delete=models.CASCADE, related_name="payments"
     )
