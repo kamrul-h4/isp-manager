@@ -35,6 +35,10 @@ class UserListSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ("id", "uid")
 
+    def create(self, validated_data):
+        validated_data["organization_id"] = self.context["request"].user.organization_id
+        return super().create(validated_data)
+
 
 class UserDetailSerializer(UserListSerializer):
     class Meta(UserListSerializer.Meta):

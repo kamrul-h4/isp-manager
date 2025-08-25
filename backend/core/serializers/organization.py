@@ -28,10 +28,10 @@ class OrganizationListSerializer(OrganizationBase):
         fields = OrganizationBase.Meta.fields + ()
         read_only_fields = OrganizationBase.Meta.read_only_fields + ()
 
-        def create(self, validated_data):
-            # Custom create logic if needed
-            validated_data["status"] = "DRAFT"  # Default status
-            return super().create(validated_data)
+    def create(self, validated_data):
+        # Custom create logic if needed
+        validated_data["status"] = "DRAFT"  # Default status
+        return super().create(validated_data)
 
 
 class OrganizationDetailSerializer(OrganizationListSerializer):
@@ -50,3 +50,7 @@ class OrganizationDetailSerializer(OrganizationListSerializer):
             "created_at",
             "updated_at",
         )
+
+    def update(self, instance, validated_data):
+        validated_data["updated_by_id"] = self.context["request"].user.id
+        return super().update(instance, validated_data)

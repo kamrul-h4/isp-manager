@@ -124,6 +124,8 @@ class CustomerListSerializer(CustomerBase):
         #     password="123456",  # Default password, can be changed later
         # )
         # validated_data["user_id"] = user.id
+        validated_data["organization_id"] = self.context["request"].user.organization_id
+        # Save the entry_by and update_by fields
         validated_data["entry_by_id"] = self.context["request"].user.id
         validated_data["updated_by_id"] = self.context["request"].user.id
         return Customer.objects.create(**validated_data)
