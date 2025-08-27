@@ -1,11 +1,13 @@
 """Serializer for user model."""
 
 from django.contrib.auth import get_user_model, authenticate
+from django.utils import timezone
 
 from rest_framework import status
 from rest_framework import serializers
 from rest_framework.exceptions import APIException
 
+from core.choices import SubscriptionStatus
 
 User = get_user_model()
 
@@ -143,14 +145,50 @@ class LoginSerializer(serializers.Serializer):
                 detail="A password is requied for login",
                 code=status.HTTP_400_BAD_REQUEST,
             )
-        user = authenticate(username=phone, password=password)
-        if user is None:
+        # user = authenticate(username=phone, password=password)
+        # if user is None:
+        #     raise APIException(
+        #         detail="Invalid Credentials", code=status.HTTP_400_BAD_REQUEST
+        #     )
+        # if not user.is_active:
+        #     raise APIException(
+        #         detail="User is not active", code=status.HTTP_400_BAD_REQUEST
+        #     )
+        user = (
+            User.objects.filter(phone=phone, is_active=True)
+            .select_related("organization")
+            .first()
+        )
+        if not user or not user.check_password(password):
             raise APIException(
                 detail="Invalid Credentials", code=status.HTTP_400_BAD_REQUEST
             )
-        if not user.is_active:
+        if not user.is_superuser and not user.organization:
             raise APIException(
-                detail="User is not active", code=status.HTTP_400_BAD_REQUEST
+                detail="User does not belong to any organization",
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+        if (
+            user.organization
+            and user.organization.subscription_status != SubscriptionStatus.ACTIVE
+        ):
+            raise APIException(
+                detail="Your organization is not active. Please contact with support.",
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+        print("user organization end date:", user.organization.subscription_end_date)
+        if user.organization and not user.organization.subscription_end_date:
+            raise APIException(
+                detail="Your organization subscription end date is not set. Please contact with support.",
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+        if (
+            user.organization
+            and user.organization.subscription_end_date < timezone.now().date()
+        ):
+            raise APIException(
+                detail="Your organization subscription has expired. Please contact with support.",
+                code=status.HTTP_400_BAD_REQUEST,
             )
 
         return {
@@ -161,4 +199,14 @@ class LoginSerializer(serializers.Serializer):
             "phone": user.phone,
             "email": user.email,
             "kind": user.kind,
+            "is_superuser": user.is_superuser,
+            "organization": {
+                "id": user.organization_id,
+                "name": user.organization.name if user.organization else None,
+                "subscription_end_date": (
+                    user.organization.subscription_end_date.isoformat()
+                    if user.organization
+                    else None
+                ),
+            },
         }

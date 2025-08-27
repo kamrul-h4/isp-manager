@@ -43,7 +43,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False").lower() in ("true", "1", "yes")
 # print(f"DEBUG: {DEBUG}")
-# DEBUG = True  # Remove this hardcoded line
+DEBUG = True  # Remove this hardcoded line
 
 ENABLE_SILK = os.environ.get("ENABLE_SILK", "False").lower() == "true"
 
@@ -246,7 +246,7 @@ REST_FRAMEWORK = {
     # "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
-        # "rest_framework.renderers.BrowsableAPIRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",
     ],
     # "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_THROTTLE_RATES": {"anon": "300/minute", "user": "1200/minute"},
