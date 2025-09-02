@@ -48,7 +48,7 @@ class CustomerList(ListCreateAPIView):
             Customer()
             .get_all_actives()
             .filter(organization_id=user.organization_id)
-            .select_related("package")
+            .select_related("package", "organization")
         )
 
         # Text search filters
@@ -111,7 +111,7 @@ class CustomerDetail(RetrieveUpdateDestroyAPIView):
             Customer()
             .get_all_actives()
             .filter(organization_id=self.request.user.organization_id)
-            .select_related("package", "user")
+            .select_related("package", "user", "organization")
         )
         return queryset
 

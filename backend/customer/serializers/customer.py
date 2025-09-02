@@ -124,6 +124,19 @@ class CustomerListSerializer(CustomerBase):
         #     password="123456",  # Default password, can be changed later
         # )
         # validated_data["user_id"] = user.id
+        organization = self.context["request"].user.organization
+        if not organization:
+            raise serializers.ValidationError(
+                {"organization": "Organization not found for this user."}
+            )
+        if organization.allowed_customer <= organization.total_customer:
+            raise serializers.ValidationError(
+                {
+                    "organization": "Customer limit exceeded. Please upgrade your plan or contact support."
+                }
+            )
+        organization.total_customer += 1
+        organization.save(update_fields=["total_customer"])
         validated_data["organization_id"] = self.context["request"].user.organization_id
         # Save the entry_by and update_by fields
         validated_data["entry_by_id"] = self.context["request"].user.id
@@ -167,6 +180,13 @@ class CustomerDetailSerializer(CustomerBase):
         # else:
         #     print("No need to toggle the user status in MikroTik")
         return super().update(instance, validated_data)
+
+    def delete(self, instance):
+        organization = self.context["request"].user.organization
+        if organization and organization.total_customer > 0:
+            organization.total_customer -= 1
+            organization.save(update_fields=["total_customer"])
+        return super().delete(instance)
 
 
 class StatusToggleSerializer(serializers.Serializer):
