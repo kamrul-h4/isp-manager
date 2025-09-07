@@ -41,6 +41,7 @@ class NameDescriptionBaseModel(BaseModelWithUID):
     name = models.CharField(
         max_length=255,
         db_index=True,
+        blank=True,
     )
     description = models.TextField(
         blank=True,
