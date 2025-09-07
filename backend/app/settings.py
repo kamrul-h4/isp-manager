@@ -43,15 +43,16 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False").lower() in ("true", "1", "yes")
 # print(f"DEBUG: {DEBUG}")
-DEBUG = True  # Remove this hardcoded line
+# DEBUG = True  # Remove this hardcoded line
 
 ENABLE_SILK = os.environ.get("ENABLE_SILK", "False").lower() == "true"
 
 # Proper ALLOWED_HOSTS configuration
 ALLOWED_HOSTS = os.environ.get(
-    "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,0.0.0.0,192.168.68.108"
+    "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,0.0.0.0,172.50.50.22,103.146.16.148"
 ).split(",")
 
+print("ALLOWED HOSTS: ", ALLOWED_HOSTS)
 # CSRF_TRUSTED_ORIGINS = os.getenv(
 #     "DJANGO_CSRF_TRUSTED_ORIGINS", "https://127.0.0.1"
 # ).split(",")
@@ -59,9 +60,9 @@ ALLOWED_HOSTS = os.environ.get(
 # CSRF trusted origins for Docker setup
 CSRF_TRUSTED_ORIGINS = os.environ.get(
     "DJANGO_CSRF_TRUSTED_ORIGINS",
-    "http://localhost,http://127.0.0.1,http://0.0.0.0,http://192.168.68.108,http://192.168.68.108:80",
+    "http://localhost,http://127.0.0.1,http://0.0.0.0,http://103.146.16.148,http://103.146.16.148:1111",
 ).split(",")
-
+print("CSRF_TRUSTED_ORIGINS: ", CSRF_TRUSTED_ORIGINS)
 MIKROTIK_URL = os.environ.get(
     "MIKROTIK_URL", "http://103.146.16.148"
 )  # Use http:// or https://
@@ -246,7 +247,7 @@ REST_FRAMEWORK = {
     # "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
-        "rest_framework.renderers.BrowsableAPIRenderer",
+        # "rest_framework.renderers.BrowsableAPIRenderer",
     ],
     # "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_THROTTLE_RATES": {"anon": "300/minute", "user": "1200/minute"},
@@ -269,7 +270,7 @@ REST_FRAMEWORK = {
 # Proper CORS configuration for Docker setup
 CORS_ALLOWED_ORIGINS = os.environ.get(
     "CORS_ALLOWED_ORIGINS",
-    "http://localhost,http://127.0.0.1,http://localhost:3000,http://127.0.0.1:3000,http://localhost:80,http://127.0.0.1:80,http://192.168.68.108,http://192.168.68.108:80",
+    "http://localhost,http://127.0.0.1,http://localhost:3000,http://127.0.0.1:3000,http://103.146.16.148,103.146.16.148",
 ).split(",")
 
 # Only allow CORS_ALLOW_ALL_ORIGINS in development
