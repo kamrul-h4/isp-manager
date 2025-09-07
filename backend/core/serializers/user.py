@@ -6,8 +6,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework import serializers
 from rest_framework.exceptions import APIException
-
-from core.choices import SubscriptionStatus
+from core.choices import SubscriptionStatus, UserKind
 
 User = get_user_model()
 
@@ -159,15 +158,23 @@ class LoginSerializer(serializers.Serializer):
             .select_related("organization")
             .first()
         )
+        print("User ", user)
         if not user or not user.check_password(password):
             raise APIException(
                 detail="Invalid Credentials", code=status.HTTP_400_BAD_REQUEST
             )
-        if not user.is_superuser and not user.organization:
-            raise APIException(
-                detail="User does not belong to any organization",
-                code=status.HTTP_400_BAD_REQUEST,
-            )
+        if user.is_superuser or user.kind == UserKind.SUPER_ADMIN:
+            print("super admin login")
+            return {
+                "id": user.id,
+                "uid": str(user.uid),
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "phone": user.phone,
+                "email": user.email,
+                "kind": user.kind,
+                "is_superuser": user.is_superuser,
+            }
         if (
             user.organization
             and user.organization.subscription_status != SubscriptionStatus.ACTIVE
@@ -176,7 +183,8 @@ class LoginSerializer(serializers.Serializer):
                 detail="Your organization is not active. Please contact with support.",
                 code=status.HTTP_400_BAD_REQUEST,
             )
-        print("user organization end date:", user.organization.subscription_end_date)
+        # print("user organization end date:", user.organization.subscription_end_date)
+        # print("user organization:", user.organization)
         if user.organization and not user.organization.subscription_end_date:
             raise APIException(
                 detail="Your organization subscription end date is not set. Please contact with support.",

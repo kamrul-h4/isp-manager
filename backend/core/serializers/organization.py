@@ -37,12 +37,12 @@ class OrganizationListSerializer(OrganizationBase):
 class OrganizationDetailSerializer(OrganizationListSerializer):
     class Meta(OrganizationListSerializer.Meta):
         fields = OrganizationListSerializer.Meta.fields + (
-            "mikrotik_ip",
-            "mikrotik_username",
-            "mikrotik_password",
-            "mikrotik_port",
-            "mikrotik_secret",
-            "mikrotik_ssl",
+            "router_ip",
+            "router_username",
+            "router_password",
+            "router_port",
+            "router_secret",
+            "router_ssl",
             "created_at",
             "updated_at",
         )

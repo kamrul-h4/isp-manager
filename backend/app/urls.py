@@ -67,7 +67,7 @@ if settings.DEBUG:
     )
     urlpatterns += [
         path(
-            "swagger<format>/",
+            "api/swagger<format>/",
             schema_view.without_ui(cache_timeout=0),
             name="schema-json",
         ),
@@ -77,7 +77,9 @@ if settings.DEBUG:
             name="schema-swagger-ui",
         ),
         path(
-            "redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
+            "api/redoc/",
+            schema_view.with_ui("redoc", cache_timeout=0),
+            name="schema-redoc",
         ),
     ]
 
