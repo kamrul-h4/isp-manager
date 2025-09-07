@@ -270,7 +270,7 @@ REST_FRAMEWORK = {
 # Proper CORS configuration for Docker setup
 CORS_ALLOWED_ORIGINS = os.environ.get(
     "CORS_ALLOWED_ORIGINS",
-    "http://localhost,http://127.0.0.1,http://localhost:3000,http://127.0.0.1:3000,http://103.146.16.148,103.146.16.148",
+    "http://localhost,http://127.0.0.1,http://localhost:3000,http://127.0.0.1:3000,http://103.146.16.148,http://103.146.16.148:1111",
 ).split(",")
 
 # Only allow CORS_ALLOW_ALL_ORIGINS in development
