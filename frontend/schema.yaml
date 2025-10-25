@@ -1,0 +1,2920 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: 0.0.0
+paths:
+  /api/schema:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - schema
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/customers:
+    get:
+      operationId: v1_customers_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCustomerListList'
+          description: ''
+    post:
+      operationId: v1_customers_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomerList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomerList'
+        required: true
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerList'
+          description: ''
+  /api/v1/customers/{uid}:
+    get:
+      operationId: v1_customers_retrieve
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerDetail'
+          description: ''
+    put:
+      operationId: v1_customers_update
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomerDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomerDetail'
+        required: true
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerDetail'
+          description: ''
+    patch:
+      operationId: v1_customers_partial_update
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomerDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomerDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomerDetail'
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerDetail'
+          description: ''
+    delete:
+      operationId: v1_customers_destroy
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/customers/{uid}/payments:
+    get:
+      operationId: v1_customers_payments_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPaymentListList'
+          description: ''
+    post:
+      operationId: v1_customers_payments_create
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PaymentList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PaymentList'
+        required: true
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentList'
+          description: ''
+  /api/v1/customers/bills/generate:
+    post:
+      operationId: v1_customers_bills_generate_create
+      description: |-
+        Placeholder for GenerateBill API view.
+        This can be implemented later as per requirements.
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/customers/status/toggle:
+    post:
+      operationId: v1_customers_status_toggle_create
+      description: API to toggle the status of a customer.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatusToggle'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StatusToggle'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StatusToggle'
+        required: true
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusToggle'
+          description: ''
+  /api/v1/dashboard:
+    get:
+      operationId: v1_dashboard_retrieve
+      description: Optimized dashboard API returning key metrics and recent activity.
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/organizations:
+    get:
+      operationId: v1_organizations_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrganizationListList'
+          description: ''
+    post:
+      operationId: v1_organizations_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrganizationList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrganizationList'
+        required: true
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationList'
+          description: ''
+  /api/v1/organizations/{uid}:
+    get:
+      operationId: v1_organizations_retrieve
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationDetail'
+          description: ''
+    put:
+      operationId: v1_organizations_update
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrganizationDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrganizationDetail'
+        required: true
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationDetail'
+          description: ''
+    patch:
+      operationId: v1_organizations_partial_update
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganizationDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganizationDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganizationDetail'
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationDetail'
+          description: ''
+    delete:
+      operationId: v1_organizations_destroy
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/organizations/active/sessions:
+    get:
+      operationId: v1_organizations_active_sessions_retrieve
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/packages:
+    get:
+      operationId: v1_packages_list
+      description: API view to list and create packages.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPackageListList'
+          description: ''
+    post:
+      operationId: v1_packages_create
+      description: API view to list and create packages.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PackageList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PackageList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PackageList'
+        required: true
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageList'
+          description: ''
+  /api/v1/packages/{uid}:
+    get:
+      operationId: v1_packages_retrieve
+      description: API view to retrieve, update, or delete a package.
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageDetail'
+          description: ''
+    put:
+      operationId: v1_packages_update
+      description: API view to retrieve, update, or delete a package.
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PackageDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PackageDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PackageDetail'
+        required: true
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageDetail'
+          description: ''
+    patch:
+      operationId: v1_packages_partial_update
+      description: API view to retrieve, update, or delete a package.
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPackageDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPackageDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPackageDetail'
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageDetail'
+          description: ''
+    delete:
+      operationId: v1_packages_destroy
+      description: API view to retrieve, update, or delete a package.
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/packages/{uid}/customers:
+    get:
+      operationId: v1_packages_customers_list
+      description: API view to list customers of a package.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCustomerListList'
+          description: ''
+  /api/v1/payments:
+    get:
+      operationId: v1_payments_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPaymentListList'
+          description: ''
+    post:
+      operationId: v1_payments_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PaymentList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PaymentList'
+        required: true
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentList'
+          description: ''
+  /api/v1/payments/{uid}:
+    get:
+      operationId: v1_payments_retrieve
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentDetail'
+          description: ''
+    put:
+      operationId: v1_payments_update
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PaymentDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PaymentDetail'
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentDetail'
+          description: ''
+    patch:
+      operationId: v1_payments_partial_update
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPaymentDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPaymentDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPaymentDetail'
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentDetail'
+          description: ''
+    delete:
+      operationId: v1_payments_destroy
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/subscriptions:
+    get:
+      operationId: v1_subscriptions_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSubscriptionListList'
+          description: ''
+  /api/v1/subscriptions/{uid}:
+    get:
+      operationId: v1_subscriptions_retrieve
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionDetail'
+          description: ''
+    put:
+      operationId: v1_subscriptions_update
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SubscriptionDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SubscriptionDetail'
+        required: true
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionDetail'
+          description: ''
+    patch:
+      operationId: v1_subscriptions_partial_update
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSubscriptionDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSubscriptionDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSubscriptionDetail'
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionDetail'
+          description: ''
+    delete:
+      operationId: v1_subscriptions_destroy
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/users:
+    get:
+      operationId: v1_users_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserListList'
+          description: ''
+    post:
+      operationId: v1_users_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserList'
+        required: true
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserList'
+          description: ''
+  /api/v1/users/{uid}:
+    get:
+      operationId: v1_users_retrieve
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+          description: ''
+    put:
+      operationId: v1_users_update
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserDetail'
+        required: true
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+          description: ''
+    patch:
+      operationId: v1_users_partial_update
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserDetail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserDetail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserDetail'
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+          description: ''
+    delete:
+      operationId: v1_users_destroy
+      parameters:
+      - in: path
+        name: uid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/users/login:
+    post:
+      operationId: v1_users_login_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Login'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Login'
+          description: ''
+  /api/v1/users/login/refresh:
+    post:
+      operationId: v1_users_login_refresh_create
+      description: View for refreshing access token.
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/users/me:
+    get:
+      operationId: v1_users_me_retrieve
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+          description: ''
+    put:
+      operationId: v1_users_me_update
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Me'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Me'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Me'
+        required: true
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+          description: ''
+    patch:
+      operationId: v1_users_me_partial_update
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedMe'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedMe'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedMe'
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+          description: ''
+  /api/v1/users/register:
+    post:
+      operationId: v1_users_register_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+        required: true
+      security:
+      - cookieAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRegistration'
+          description: ''
+components:
+  schemas:
+    BillingMonthEnum:
+      enum:
+      - JANUARY
+      - FEBRUARY
+      - MARCH
+      - APRIL
+      - MAY
+      - JUNE
+      - JULY
+      - AUGUST
+      - SEPTEMBER
+      - OCTOBER
+      - NOVEMBER
+      - DECEMBER
+      type: string
+      description: |-
+        * `JANUARY` - January
+        * `FEBRUARY` - February
+        * `MARCH` - March
+        * `APRIL` - April
+        * `MAY` - May
+        * `JUNE` - June
+        * `JULY` - July
+        * `AUGUST` - August
+        * `SEPTEMBER` - September
+        * `OCTOBER` - October
+        * `NOVEMBER` - November
+        * `DECEMBER` - December
+    BlankEnum:
+      enum:
+      - ''
+    ConnectionTypeEnum:
+      enum:
+      - DHCP
+      - STATIC
+      - PPPoE
+      type: string
+      description: |-
+        * `DHCP` - DHCP
+        * `STATIC` - Static
+        * `PPPoE` - PPPoE
+    CustomerBase:
+      type: object
+      description: Base serializer for Customer model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 254
+        phone:
+          type: string
+          maxLength: 20
+        address:
+          type: string
+          nullable: true
+        nid:
+          type: string
+          description: National ID number of the customer.
+          maxLength: 20
+        is_free:
+          type: boolean
+          description: Indicates if the customer has a free package.
+      required:
+      - id
+      - name
+      - uid
+    CustomerDetail:
+      type: object
+      description: Serializer for customer details.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 254
+        phone:
+          type: string
+          maxLength: 20
+        address:
+          type: string
+          nullable: true
+        nid:
+          type: string
+          description: National ID number of the customer.
+          maxLength: 20
+        is_free:
+          type: boolean
+          description: Indicates if the customer has a free package.
+        user:
+          allOf:
+          - $ref: '#/components/schemas/UserList'
+          readOnly: true
+        package:
+          allOf:
+          - $ref: '#/components/schemas/PackageBase'
+          readOnly: true
+        package_id:
+          type: integer
+          writeOnly: true
+        connection_start_date:
+          type: string
+          format: date
+          readOnly: true
+          nullable: true
+        is_active:
+          type: boolean
+        ip_address:
+          type: string
+          maxLength: 45
+        mac_address:
+          type: string
+          maxLength: 32
+        username:
+          type: string
+          maxLength: 150
+        password:
+          type: string
+          maxLength: 128
+        connection_type:
+          allOf:
+          - $ref: '#/components/schemas/ConnectionTypeEnum'
+          description: |-
+            Type of connection for the customer.
+
+            * `DHCP` - DHCP
+            * `STATIC` - Static
+            * `PPPoE` - PPPoE
+      required:
+      - connection_start_date
+      - id
+      - name
+      - package
+      - uid
+      - user
+    CustomerList:
+      type: object
+      description: Serializer for listing customers.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 254
+        phone:
+          type: string
+          maxLength: 20
+        address:
+          type: string
+          nullable: true
+        nid:
+          type: string
+          description: National ID number of the customer.
+          maxLength: 20
+        is_free:
+          type: boolean
+          description: Indicates if the customer has a free package.
+        package:
+          allOf:
+          - $ref: '#/components/schemas/PackageBase'
+          readOnly: true
+        package_id:
+          type: integer
+          writeOnly: true
+        connection_start_date:
+          type: string
+          format: date
+          nullable: true
+        is_active:
+          type: boolean
+        ip_address:
+          type: string
+          maxLength: 45
+        mac_address:
+          type: string
+          maxLength: 32
+        username:
+          type: string
+          maxLength: 150
+        password:
+          type: string
+          maxLength: 128
+        connection_type:
+          allOf:
+          - $ref: '#/components/schemas/ConnectionTypeEnum'
+          description: |-
+            Type of connection for the customer.
+
+            * `DHCP` - DHCP
+            * `STATIC` - Static
+            * `PPPoE` - PPPoE
+        credentials:
+          nullable: true
+          description: Additional credentials for the customer.
+      required:
+      - id
+      - name
+      - package
+      - uid
+    GenderEnum:
+      enum:
+      - FEMALE
+      - MALE
+      - UNKNOWN
+      type: string
+      description: |-
+        * `FEMALE` - Female
+        * `MALE` - Male
+        * `UNKNOWN` - Unknown
+    KindEnum:
+      enum:
+      - ADMIN
+      - CUSTOMER
+      - MANAGER
+      - STAFF
+      - SUPER_ADMIN
+      - OWNER
+      - OTHER
+      type: string
+      description: |-
+        * `ADMIN` - Admin
+        * `CUSTOMER` - Customer
+        * `MANAGER` - Manager
+        * `STAFF` - Staff
+        * `SUPER_ADMIN` - Super Admin
+        * `OWNER` - Owner
+        * `OTHER` - Other
+    Login:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          maxLength: 15
+        uid:
+          type: string
+          readOnly: true
+          maxLength: 64
+        phone:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 255
+      required:
+      - id
+      - password
+      - phone
+      - uid
+    Me:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        phone:
+          type: string
+          title: Phone Number
+          maxLength: 20
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        gender:
+          oneOf:
+          - $ref: '#/components/schemas/GenderEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        image:
+          type: string
+          format: uri
+          nullable: true
+          title: Profile_image
+        kind:
+          $ref: '#/components/schemas/KindEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - phone
+      - uid
+      - updated_at
+    OrganizationDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        address:
+          type: string
+        phone:
+          type: string
+          maxLength: 20
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        website:
+          type: string
+          format: uri
+          maxLength: 200
+        subscription:
+          type: integer
+          nullable: true
+        subscription_status:
+          $ref: '#/components/schemas/SubscriptionStatusEnum'
+        subscription_end_date:
+          type: string
+          format: date
+          readOnly: true
+          nullable: true
+        logo:
+          type: string
+          format: uri
+          readOnly: true
+        allowed_customer:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        total_customer:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        router_ip:
+          type: string
+          maxLength: 64
+        router_username:
+          type: string
+          maxLength: 150
+        router_password:
+          type: string
+          maxLength: 128
+        router_port:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        router_secret:
+          type: string
+          maxLength: 150
+        router_ssl:
+          type: boolean
+          description: Use SSL for Mikrotik connection
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - logo
+      - name
+      - phone
+      - subscription_end_date
+      - uid
+      - updated_at
+    OrganizationList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        address:
+          type: string
+        phone:
+          type: string
+          maxLength: 20
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        website:
+          type: string
+          format: uri
+          maxLength: 200
+        subscription:
+          type: integer
+          nullable: true
+        subscription_status:
+          $ref: '#/components/schemas/SubscriptionStatusEnum'
+        subscription_end_date:
+          type: string
+          format: date
+          readOnly: true
+          nullable: true
+        logo:
+          type: string
+          format: uri
+          readOnly: true
+        allowed_customer:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        total_customer:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+      required:
+      - id
+      - logo
+      - name
+      - phone
+      - subscription_end_date
+      - uid
+    PackageBase:
+      type: object
+      description: Base serializer for Package model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        speed_mbps:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Speed in Mbps for the package.
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          description: Price of the package in USD.
+        description:
+          type: string
+          nullable: true
+      required:
+      - id
+      - name
+      - uid
+    PackageDetail:
+      type: object
+      description: Serializer for package details.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        speed_mbps:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Speed in Mbps for the package.
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          description: Price of the package in USD.
+        description:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - name
+      - uid
+      - updated_at
+    PackageList:
+      type: object
+      description: Serializer for listing packages.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        speed_mbps:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Speed in Mbps for the package.
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          description: Price of the package in USD.
+        description:
+          type: string
+          nullable: true
+      required:
+      - id
+      - name
+      - uid
+    PaginatedCustomerListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerList'
+    PaginatedOrganizationListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationList'
+    PaginatedPackageListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PackageList'
+    PaginatedPaymentListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentList'
+    PaginatedSubscriptionListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriptionList'
+    PaginatedUserListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserList'
+    PatchedCustomerDetail:
+      type: object
+      description: Serializer for customer details.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 254
+        phone:
+          type: string
+          maxLength: 20
+        address:
+          type: string
+          nullable: true
+        nid:
+          type: string
+          description: National ID number of the customer.
+          maxLength: 20
+        is_free:
+          type: boolean
+          description: Indicates if the customer has a free package.
+        user:
+          allOf:
+          - $ref: '#/components/schemas/UserList'
+          readOnly: true
+        package:
+          allOf:
+          - $ref: '#/components/schemas/PackageBase'
+          readOnly: true
+        package_id:
+          type: integer
+          writeOnly: true
+        connection_start_date:
+          type: string
+          format: date
+          readOnly: true
+          nullable: true
+        is_active:
+          type: boolean
+        ip_address:
+          type: string
+          maxLength: 45
+        mac_address:
+          type: string
+          maxLength: 32
+        username:
+          type: string
+          maxLength: 150
+        password:
+          type: string
+          maxLength: 128
+        connection_type:
+          allOf:
+          - $ref: '#/components/schemas/ConnectionTypeEnum'
+          description: |-
+            Type of connection for the customer.
+
+            * `DHCP` - DHCP
+            * `STATIC` - Static
+            * `PPPoE` - PPPoE
+    PatchedMe:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        phone:
+          type: string
+          title: Phone Number
+          maxLength: 20
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        gender:
+          oneOf:
+          - $ref: '#/components/schemas/GenderEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        image:
+          type: string
+          format: uri
+          nullable: true
+          title: Profile_image
+        kind:
+          $ref: '#/components/schemas/KindEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedOrganizationDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        address:
+          type: string
+        phone:
+          type: string
+          maxLength: 20
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        website:
+          type: string
+          format: uri
+          maxLength: 200
+        subscription:
+          type: integer
+          nullable: true
+        subscription_status:
+          $ref: '#/components/schemas/SubscriptionStatusEnum'
+        subscription_end_date:
+          type: string
+          format: date
+          readOnly: true
+          nullable: true
+        logo:
+          type: string
+          format: uri
+          readOnly: true
+        allowed_customer:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        total_customer:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        router_ip:
+          type: string
+          maxLength: 64
+        router_username:
+          type: string
+          maxLength: 150
+        router_password:
+          type: string
+          maxLength: 128
+        router_port:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        router_secret:
+          type: string
+          maxLength: 150
+        router_ssl:
+          type: boolean
+          description: Use SSL for Mikrotik connection
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedPackageDetail:
+      type: object
+      description: Serializer for package details.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        speed_mbps:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          description: Speed in Mbps for the package.
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          description: Price of the package in USD.
+        description:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedPaymentDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        customer:
+          allOf:
+          - $ref: '#/components/schemas/CustomerBase'
+          readOnly: true
+        entry_by:
+          allOf:
+          - $ref: '#/components/schemas/UserLite'
+          readOnly: true
+        bill_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          description: Total bill amount for the payment.
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        billing_month:
+          allOf:
+          - $ref: '#/components/schemas/BillingMonthEnum'
+          description: |-
+            Month for which the payment is made.
+
+            * `JANUARY` - January
+            * `FEBRUARY` - February
+            * `MARCH` - March
+            * `APRIL` - April
+            * `MAY` - May
+            * `JUNE` - June
+            * `JULY` - July
+            * `AUGUST` - August
+            * `SEPTEMBER` - September
+            * `OCTOBER` - October
+            * `NOVEMBER` - November
+            * `DECEMBER` - December
+        payment_method:
+          allOf:
+          - $ref: '#/components/schemas/PaymentMethodEnum'
+          description: |-
+            Method of payment.
+
+            * `BANK_TRANSFER` - Bank Transfer
+            * `BKASH` - Bkash
+            * `CASH` - Cash
+            * `NAGAD` - Nagad
+            * `MOBILE_BANKING` - Mobile Banking
+            * `ONLINE_PAYMENT` - Online Payment
+            * `ROCKET` - Rocket
+            * `OTHER` - Other
+        paid:
+          type: boolean
+          description: Indicates if the payment is completed.
+        transaction_id:
+          type: string
+          maxLength: 100
+        payment_date:
+          type: string
+          format: date-time
+          nullable: true
+        note:
+          type: string
+          nullable: true
+          description: Additional notes for the payment.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedSubscriptionDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+        plan:
+          $ref: '#/components/schemas/PlanEnum'
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        max_customers:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedUserDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        phone:
+          type: string
+          title: Phone Number
+          maxLength: 20
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        gender:
+          oneOf:
+          - $ref: '#/components/schemas/GenderEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        kind:
+          $ref: '#/components/schemas/KindEnum'
+        image:
+          type: string
+          format: uri
+          nullable: true
+          title: Profile_image
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        is_staff:
+          type: boolean
+    PaymentDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        customer:
+          allOf:
+          - $ref: '#/components/schemas/CustomerBase'
+          readOnly: true
+        entry_by:
+          allOf:
+          - $ref: '#/components/schemas/UserLite'
+          readOnly: true
+        bill_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          description: Total bill amount for the payment.
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        billing_month:
+          allOf:
+          - $ref: '#/components/schemas/BillingMonthEnum'
+          description: |-
+            Month for which the payment is made.
+
+            * `JANUARY` - January
+            * `FEBRUARY` - February
+            * `MARCH` - March
+            * `APRIL` - April
+            * `MAY` - May
+            * `JUNE` - June
+            * `JULY` - July
+            * `AUGUST` - August
+            * `SEPTEMBER` - September
+            * `OCTOBER` - October
+            * `NOVEMBER` - November
+            * `DECEMBER` - December
+        payment_method:
+          allOf:
+          - $ref: '#/components/schemas/PaymentMethodEnum'
+          description: |-
+            Method of payment.
+
+            * `BANK_TRANSFER` - Bank Transfer
+            * `BKASH` - Bkash
+            * `CASH` - Cash
+            * `NAGAD` - Nagad
+            * `MOBILE_BANKING` - Mobile Banking
+            * `ONLINE_PAYMENT` - Online Payment
+            * `ROCKET` - Rocket
+            * `OTHER` - Other
+        paid:
+          type: boolean
+          description: Indicates if the payment is completed.
+        transaction_id:
+          type: string
+          maxLength: 100
+        payment_date:
+          type: string
+          format: date-time
+          nullable: true
+        note:
+          type: string
+          nullable: true
+          description: Additional notes for the payment.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - customer
+      - entry_by
+      - id
+      - uid
+      - updated_at
+    PaymentList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        customer:
+          allOf:
+          - $ref: '#/components/schemas/CustomerBase'
+          readOnly: true
+        entry_by:
+          allOf:
+          - $ref: '#/components/schemas/UserLite'
+          readOnly: true
+        bill_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          description: Total bill amount for the payment.
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        billing_month:
+          allOf:
+          - $ref: '#/components/schemas/BillingMonthEnum'
+          description: |-
+            Month for which the payment is made.
+
+            * `JANUARY` - January
+            * `FEBRUARY` - February
+            * `MARCH` - March
+            * `APRIL` - April
+            * `MAY` - May
+            * `JUNE` - June
+            * `JULY` - July
+            * `AUGUST` - August
+            * `SEPTEMBER` - September
+            * `OCTOBER` - October
+            * `NOVEMBER` - November
+            * `DECEMBER` - December
+        payment_method:
+          allOf:
+          - $ref: '#/components/schemas/PaymentMethodEnum'
+          description: |-
+            Method of payment.
+
+            * `BANK_TRANSFER` - Bank Transfer
+            * `BKASH` - Bkash
+            * `CASH` - Cash
+            * `NAGAD` - Nagad
+            * `MOBILE_BANKING` - Mobile Banking
+            * `ONLINE_PAYMENT` - Online Payment
+            * `ROCKET` - Rocket
+            * `OTHER` - Other
+        paid:
+          type: boolean
+          description: Indicates if the payment is completed.
+        transaction_id:
+          type: string
+          maxLength: 100
+        payment_date:
+          type: string
+          format: date-time
+          nullable: true
+        note:
+          type: string
+          nullable: true
+          description: Additional notes for the payment.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        customer_id:
+          type: integer
+          writeOnly: true
+      required:
+      - created_at
+      - customer
+      - customer_id
+      - entry_by
+      - id
+      - uid
+      - updated_at
+    PaymentMethodEnum:
+      enum:
+      - BANK_TRANSFER
+      - BKASH
+      - CASH
+      - NAGAD
+      - MOBILE_BANKING
+      - ONLINE_PAYMENT
+      - ROCKET
+      - OTHER
+      type: string
+      description: |-
+        * `BANK_TRANSFER` - Bank Transfer
+        * `BKASH` - Bkash
+        * `CASH` - Cash
+        * `NAGAD` - Nagad
+        * `MOBILE_BANKING` - Mobile Banking
+        * `ONLINE_PAYMENT` - Online Payment
+        * `ROCKET` - Rocket
+        * `OTHER` - Other
+    PlanEnum:
+      enum:
+      - FREE
+      - BASIC
+      - PREMIUM
+      - ENTERPRISE
+      type: string
+      description: |-
+        * `FREE` - Free
+        * `BASIC` - Basic
+        * `PREMIUM` - Premium
+        * `ENTERPRISE` - Enterprise
+    StatusEnum:
+      enum:
+      - ACTIVE
+      - DRAFT
+      - INACTIVE
+      - REMOVED
+      type: string
+      description: |-
+        * `ACTIVE` - Active
+        * `DRAFT` - DRAFT
+        * `INACTIVE` - Inactive
+        * `REMOVED` - Removed
+    StatusToggle:
+      type: object
+      description: Serializer for toggling customer status.
+      properties:
+        username:
+          type: string
+          maxLength: 150
+        is_active:
+          type: boolean
+      required:
+      - is_active
+      - username
+    SubscriptionDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+        plan:
+          $ref: '#/components/schemas/PlanEnum'
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        max_customers:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - name
+      - price
+      - uid
+      - updated_at
+    SubscriptionList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+        plan:
+          $ref: '#/components/schemas/PlanEnum'
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        max_customers:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+      required:
+      - id
+      - name
+      - price
+      - uid
+    SubscriptionStatusEnum:
+      enum:
+      - ACTIVE
+      - EXPIRED
+      - CANCELLED
+      - PENDING
+      type: string
+      description: |-
+        * `ACTIVE` - Active
+        * `EXPIRED` - Expired
+        * `CANCELLED` - Cancelled
+        * `PENDING` - Pending
+    UserDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        phone:
+          type: string
+          title: Phone Number
+          maxLength: 20
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        gender:
+          oneOf:
+          - $ref: '#/components/schemas/GenderEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        kind:
+          $ref: '#/components/schemas/KindEnum'
+        image:
+          type: string
+          format: uri
+          nullable: true
+          title: Profile_image
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        is_staff:
+          type: boolean
+      required:
+      - id
+      - phone
+      - uid
+    UserList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        phone:
+          type: string
+          title: Phone Number
+          maxLength: 20
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        gender:
+          oneOf:
+          - $ref: '#/components/schemas/GenderEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        kind:
+          $ref: '#/components/schemas/KindEnum'
+        image:
+          type: string
+          format: uri
+          nullable: true
+          title: Profile_image
+      required:
+      - id
+      - phone
+      - uid
+    UserLite:
+      type: object
+      description: A lightweight serializer for user model, used for listing users.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        phone:
+          type: string
+          title: Phone Number
+          maxLength: 20
+        email:
+          type: string
+          format: email
+          maxLength: 255
+      required:
+      - id
+      - phone
+      - uid
+    UserRegistration:
+      type: object
+      properties:
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        phone:
+          type: string
+          title: Phone Number
+          maxLength: 20
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        gender:
+          oneOf:
+          - $ref: '#/components/schemas/GenderEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        image:
+          type: string
+          format: uri
+          nullable: true
+          title: Profile_image
+        password:
+          type: string
+          writeOnly: true
+        confirm_password:
+          type: string
+          writeOnly: true
+      required:
+      - confirm_password
+      - password
+      - phone
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'JWT Authorization header using the Bearer scheme. Example: "Bearer
+        <your-token>"'
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid

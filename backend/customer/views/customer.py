@@ -3,7 +3,11 @@ from django.db.models import Q, Count, Sum
 
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import (
+    ListAPIView,
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+)
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 
@@ -18,7 +22,7 @@ from core.permissions import (
     IsStaff,
     AllowAny,
 )
-
+from common.helpers import SMS
 from customer.models import Customer, Payment, Package
 from customer.serializers.customer import (
     CustomerListSerializer,
@@ -29,6 +33,8 @@ from customer.serializers.payment import PaymentListSerializer
 
 # from customer.utils import toggle_ppp_user
 from customer.helpers import Mikrotik
+from customer.tasks import add
+from customer.utils import month_name_to_bangla
 
 
 class CustomerList(ListCreateAPIView):
@@ -43,7 +49,13 @@ class CustomerList(ListCreateAPIView):
     #     ]  # Only Admin and Manager can create customers
 
     def get_queryset(self):
-        queryset = Customer().get_all_actives().select_related("package")
+        user = self.request.user
+        queryset = (
+            Customer()
+            .get_all_actives()
+            .filter(organization_id=user.organization_id)
+            .select_related("package", "organization")
+        )
 
         # Text search filters
         search = self.request.query_params.get("search", None)
@@ -88,7 +100,7 @@ class CustomerList(ListCreateAPIView):
 
 
 class CustomerDetail(RetrieveUpdateDestroyAPIView):
-    queryset = Customer().get_all_actives().select_related("package", "user")
+
     serializer_class = CustomerDetailSerializer
     permission_classes = [IsAdminUser | IsManager | IsStaff]
     lookup_field = "uid"
@@ -99,6 +111,34 @@ class CustomerDetail(RetrieveUpdateDestroyAPIView):
         return [
             (IsAdminUser | IsManager)()
         ]  # Only Admin and Manager can modify customers
+
+    def get_queryset(self):
+        queryset = (
+            Customer()
+            .get_all_actives()
+            .filter(organization_id=self.request.user.organization_id)
+            .select_related("package", "organization")
+        )
+        return queryset
+
+    def delete(self, request, *args, **kwargs):
+        print("Deleting customer...")
+        instance = self.get_object()
+        organization = request.user.organization
+        success, msg = Mikrotik.delete_ppp_user(instance.username, organization)
+        if not success:
+            return Response(
+                {"message": f"Failed to delete user in Server: {msg}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        instance.delete()
+        if organization and organization.total_customer > 0:
+            organization.total_customer -= 1
+            organization.save(update_fields=["total_customer"])
+        return Response(
+            {"message": "Customer removed successfully!!!"},
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
 
 class CustomerPaymentsList(ListCreateAPIView):
@@ -116,7 +156,10 @@ class CustomerPaymentsList(ListCreateAPIView):
         return (
             Payment()
             .get_all_actives()
-            .filter(customer__uid=self.kwargs["uid"])
+            .filter(
+                customer__uid=self.kwargs["uid"],
+                organization_id=self.request.user.organization_id,
+            )
             .select_related("customer", "entry_by")
         )
 
@@ -134,24 +177,31 @@ class GenerateBill(APIView):
 
         # Step 1: Get all active customers
         active_customers = Customer.objects.filter(
-            is_active=True, is_free=False
+            is_active=True,
+            is_free=False,
+            organization_id=request.user.organization_id,
         ).select_related("package")
+        organization = request.user.organization
+        organization_name = organization.name or "M_Online"
 
         # Step 2: Get customer IDs with existing payments for current month
-        existing_payments = Payment.objects.filter(billing_month=month)
+        existing_payments = Payment.objects.filter(
+            billing_month=month, organization_id=request.user.organization_id
+        )
         paid_customer_ids = set(existing_payments.values_list("customer_id", flat=True))
 
         # Step 3: Filter customers who haven't been billed
         customers_to_bill = [
             c for c in active_customers if c.id not in paid_customer_ids
         ]
-
+        messages = []
         # Step 4: Create payment records in bulk
         payments_to_create = []
         for customer in customers_to_bill:
             bill_amount = customer.package.price if customer.package else 0.0
             payments_to_create.append(
                 Payment(
+                    organization_id=request.user.organization_id,
                     customer=customer,
                     bill_amount=bill_amount,
                     amount=0.0,
@@ -161,14 +211,23 @@ class GenerateBill(APIView):
                     note=f"Auto-generated bill for {month}",
                 )
             )
+            messages.append(
+                {
+                    "to": customer.phone,
+                    "message": f"{month_name_to_bangla.get(month, '')} মাসের বিল {bill_amount}TK পরিশোধ করুন - {organization_name}",
+                }
+            )
 
         # Bulk create payments
         Payment.objects.bulk_create(payments_to_create)
-
+        sms_send = False
+        if messages and organization.sms_feature:
+            sms_send = SMS.send_bulk_sms(messages)
         return Response(
             {
                 "message": f"Billing for {month} processed.",
                 "created_payments_count": len(payments_to_create),
+                "sms_send": sms_send,
                 # "payments": payments_to_create,
             }
         )
@@ -187,13 +246,17 @@ class Dashboard(APIView):
         # thirty_days_ago = now - timezone.timedelta(days=30)
 
         # === 1. Aggregated Stats ===
-        customer_stats = Customer.objects.aggregate(
-            total=Count("id"), active=Count("id", filter=Q(is_active=True))
-        )
+        customer_stats = Customer.objects.filter(
+            organization_id=request.user.organization_id
+        ).aggregate(total=Count("id"), active=Count("id", filter=Q(is_active=True)))
 
-        package_stats = Package.objects.aggregate(total=Count("id"))
+        package_stats = Package.objects.filter(
+            organization_id=request.user.organization_id
+        ).aggregate(total=Count("id"))
 
-        payment_stats = Payment.objects.aggregate(
+        payment_stats = Payment.objects.filter(
+            organization_id=request.user.organization_id
+        ).aggregate(
             total_paid=Count("id", filter=Q(paid=True)),
             total_amount=Sum("amount", filter=Q(paid=True)),
             pending=Count("id", filter=Q(paid=False)),
@@ -251,17 +314,38 @@ class StatusToggle(APIView):
         username = serialier.validated_data.get("username")
         is_active = serialier.validated_data.get("is_active")
 
-        customer = Customer.objects.filter(username=username).first()
+        customer = (
+            Customer.objects.filter(username=username)
+            .select_related("organization")
+            .first()
+        )
         if not customer:
             return Response(
                 {"error": "Customer not found."},
                 status=status.HTTP_404_NOT_FOUND,
             )
+        if not customer.organization:
+            return Response(
+                {"message": "Customer does not belongs to an organization"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         customer.is_active = is_active
-        success, message = Mikrotik.toggle_ppp_user(username, not is_active)
-        if not success:
-            return Response({"error": message}, status=status.HTTP_400_BAD_REQUEST)
+        # success, message = Mikrotik.toggle_ppp_user(username, not is_active, customer.organization)
+        # if not success:
+        #     return Response({"error": message}, status=status.HTTP_400_BAD_REQUEST)
 
         customer.save(update_fields=["is_active"])
 
-        return Response({"message": message}, status=status.HTTP_200_OK)
+        return Response({"message": "User Status Updated"}, status=status.HTTP_200_OK)
+
+
+class TestCeleryTask(APIView):
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(self, request, *args, **kwargs):
+        add.delay(15, 30)
+        return Response(
+            {"message": "Backgroud task started"}, status=status.HTTP_200_OK
+        )

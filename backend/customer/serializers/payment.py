@@ -4,6 +4,7 @@ from django.db import transaction
 import logging
 from django.utils import timezone
 from rest_framework import serializers
+from core.views import organization
 from customer.models import Payment, Customer
 from core.serializers.user import UserLiteSerializer
 from customer.serializers.customer import CustomerBase
@@ -63,12 +64,12 @@ class PaymentListSerializer(PaymentBase):
             customer = Customer.objects.select_related("package").get(id=customer_id)
         except Customer.DoesNotExist:
             raise serializers.ValidationError(
-                {"customer_id": "Customer does not exist."}
+                {"message": "Customer does not exist."}
             )
 
         if customer.is_free:
             raise serializers.ValidationError(
-                {"customer_id": "Cannot create payment for free customers."}
+                {"message": "Cannot create payment for free customers."}
             )
 
         try:
@@ -83,12 +84,12 @@ class PaymentListSerializer(PaymentBase):
                 f"Multiple payments found for customer {customer.id} in {validated_data['billing_month']}"
             )
             raise serializers.ValidationError(
-                {"billing_month": "Multiple payments detected. Contact admin."}
+                {"message": "Multiple payments detected. Contact admin."}
             )
 
         if payment and payment.paid:
             raise serializers.ValidationError(
-                {"billing_month": "Payment for this month has already been made."}
+                {"message": "Payment for this month has already been made."}
             )
 
         bill_amount = customer.package.price if customer.package else Decimal("0.00")
@@ -105,7 +106,8 @@ class PaymentListSerializer(PaymentBase):
                 payment.transaction_id = str(transaction_id)
                 payment.entry_by = request.user
                 payment.updated_by = request.user
-                payment.note = f"Payment updated by {request.user.get_full_name() or request.user.username}"
+                payment.organization_id = request.user.organization_id
+                payment.note = f"Payment updated by {request.user.first_name} {request.user.last_name}"
                 payment.save(
                     update_fields=[
                         "payment_date",
@@ -121,6 +123,7 @@ class PaymentListSerializer(PaymentBase):
             else:
                 # Create new payment
                 payment = Payment.objects.create(
+                    organization_id=request.user.organization_id,
                     customer=customer,
                     bill_amount=bill_amount,
                     amount=amount,

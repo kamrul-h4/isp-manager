@@ -1,14 +1,9 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
+  experimental: {
+    // cacheComponents: true,
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  // Enable standalone output for Docker
-  output: 'standalone',
-};
+}
 
-export default nextConfig;
+export default nextConfig

@@ -1,0 +1,52 @@
+{
+  "code": 200,
+  "next": null,
+  "previous": null,
+  "count": 4,
+  "results": [
+    {
+      "id": 2,
+      "uid": "7cb88caf-d0cd-4beb-aa52-d20f425272f3",
+      "first_name": "Ahsan",
+      "last_name": "Jamil",
+      "phone": "01615387275",
+      "email": "ahsan@example.com",
+      "gender": "MALE",
+      "kind": "MANAGER",
+      "image": "http://103.146.16.148/media/profile_images/default.png"
+    },
+    {
+      "id": 5,
+      "uid": "461eb777-5879-40e1-bbf2-43037c5d39df",
+      "first_name": "Md",
+      "last_name": "Masum",
+      "phone": "01616554205",
+      "email": "manager.test@example.com",
+      "gender": "MALE",
+      "kind": "MANAGER",
+      "image": "http://103.146.16.148/media/profile_images/default.png"
+    },
+    {
+      "id": 3,
+      "uid": "ce649771-0b03-4577-ae9b-a13cac046281",
+      "first_name": "Abul",
+      "last_name": "Kashem",
+      "phone": "01812528183",
+      "email": "kashem@example.com",
+      "gender": "MALE",
+      "kind": "ADMIN",
+      "image": "http://103.146.16.148/media/profile_images/default.png"
+    },
+    {
+      "id": 1,
+      "uid": "f36861c8-bcc3-4117-9206-a697bcb6532e",
+      "first_name": "Kamrul",
+      "last_name": "Hasan",
+      "phone": "01778849808",
+      "email": "",
+      "gender": "UNKNOWN",
+      "kind": "SUPER_ADMIN",
+      "image": "http://103.146.16.148/media/profile_images/default.png"
+    }
+  ]
+}

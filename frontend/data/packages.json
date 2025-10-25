@@ -1,0 +1,40 @@
+{
+  "code": 200,
+  "next": null,
+  "previous": null,
+  "count": 4,
+  "results": [
+    {
+      "id": 14,
+      "uid": "07bbd5ec-a81a-4ac9-924a-8c9dbaacb629",
+      "name": "10Mbps",
+      "speed_mbps": 10,
+      "price": "500.00",
+      "description": ""
+    },
+    {
+      "id": 13,
+      "uid": "c4d262ae-ce3e-4a66-98f6-d34a4eba247b",
+      "name": "Premium",
+      "speed_mbps": 15,
+      "price": "500.00",
+      "description": ""
+    },
+    {
+      "id": 12,
+      "uid": "d1a21cd5-8d10-4955-839e-3d9a0ff05bc4",
+      "name": "Package 0 Mbps",
+      "speed_mbps": 10,
+      "price": "500.00",
+      "description": ""
+    },
+    {
+      "id": 11,
+      "uid": "10d3142d-6fad-48c2-bc89-621bebeba166",
+      "name": "5Mbps",
+      "speed_mbps": 5,
+      "price": "500.00",
+      "description": ""
+    }
+  ]
+}

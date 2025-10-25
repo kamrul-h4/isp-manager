@@ -46,22 +46,22 @@ DEBUG = os.environ.get("DEBUG", "False").lower() in ("true", "1", "yes")
 # DEBUG = True  # Remove this hardcoded line
 
 ENABLE_SILK = os.environ.get("ENABLE_SILK", "False").lower() == "true"
-
+ENABLE_DOC = os.environ.get("ENABLE_DOC", "False").lower() == "true"
 # Proper ALLOWED_HOSTS configuration
 ALLOWED_HOSTS = os.environ.get(
-    "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,0.0.0.0,192.168.68.108"
+    "DJANGO_ALLOWED_HOSTS", "localhost,htpp://127.0.0.1,http://0.0.0.0"
 ).split(",")
 
+print("ALLOWED HOSTS: ", ALLOWED_HOSTS)
 # CSRF_TRUSTED_ORIGINS = os.getenv(
 #     "DJANGO_CSRF_TRUSTED_ORIGINS", "https://127.0.0.1"
 # ).split(",")
 
 # CSRF trusted origins for Docker setup
 CSRF_TRUSTED_ORIGINS = os.environ.get(
-    "DJANGO_CSRF_TRUSTED_ORIGINS",
-    "http://localhost,http://127.0.0.1,http://0.0.0.0,http://192.168.68.108,http://192.168.68.108:80",
+    "DJANGO_CSRF_TRUSTED_ORIGINS", "http://localhost,http://127.0.0.1,http://0.0.0.0"
 ).split(",")
-
+print("CSRF_TRUSTED_ORIGINS: ", CSRF_TRUSTED_ORIGINS)
 MIKROTIK_URL = os.environ.get(
     "MIKROTIK_URL", "http://103.146.16.148"
 )  # Use http:// or https://
@@ -94,8 +94,8 @@ THIRD_PARTY_APPS = [
 if ENABLE_SILK:
     THIRD_PARTY_APPS += ["silk"]
 
-if DEBUG:
-    THIRD_PARTY_APPS += ["drf_yasg"]
+if ENABLE_DOC:
+    THIRD_PARTY_APPS += ["drf_spectacular"]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
 
@@ -148,8 +148,8 @@ WSGI_APPLICATION = "app.wsgi.application"
 # DATABASE_URL = os.environ.get(
 #     "DATABASE_URL", "postgres://dev_user:changeme@db:5432/dev_db"
 # )
-DATABASE_URL = os.environ.get("DATABASE_URL", "")
-print("Database url: ", DATABASE_URL)
+DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///db.sqlite3")
+
 DATABASES = {
     "default": dj_database_url.config(
         default=DATABASE_URL,
@@ -201,7 +201,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 # STATIC_ROOT = STATIC_DIR
-STATIC_URL = "static/"
+# STATIC_URL = "static/"
+STATIC_URL = "https://billing-static.artsensebd.com/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_ROOT = MEDIA_DIR
@@ -252,8 +253,30 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {"anon": "300/minute", "user": "1200/minute"},
     "DEFAULT_PAGINATION_CLASS": "common.pagination.ListPagination",
     "PAGE_SIZE": 20,
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
+import app.jwt_schema_extension
 
+if ENABLE_DOC:
+    REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = "drf_spectacular.openapi.AutoSchema"
+    SPECTACULAR_SETTINGS = {
+        "TITLE": "Mikrolink API",
+        "DESCRIPTION": "Your Trusted Network Partner",
+        "VERSION": "1.0.0",
+        "SERVE_INCLUDE_SCHEMA": False,  # optional
+        "SERVE_PERMISSIONS": ["rest_framework.permissions.AllowAny"],  # optional
+        # Define your custom security scheme
+        "COMPONENTS": {
+            "securitySchemes": {
+                "BearerAuth": {
+                    "type": "http",
+                    "scheme": "bearer",
+                    "bearerFormat": "JWT",
+                },
+            },
+        },
+        "SECURITY": [{"BearerAuth": []}],
+    }
 
 # # Cors Allowed Origins
 # CORS_ALLOWED_ORIGINS = os.environ.get(
@@ -267,10 +290,15 @@ REST_FRAMEWORK = {
 # ]
 
 # Proper CORS configuration for Docker setup
-CORS_ALLOWED_ORIGINS = os.environ.get(
-    "CORS_ALLOWED_ORIGINS",
-    "http://localhost,http://127.0.0.1,http://localhost:3000,http://127.0.0.1:3000,http://localhost:80,http://127.0.0.1:80,http://192.168.68.108,http://192.168.68.108:80",
-).split(",")
+CORS_ALLOWED_ORIGINS = [
+    origin
+    for origin in os.environ.get(
+        "CORS_ALLOWED_ORIGINS",
+        "http://localhost,http://127.0.0.1:3000,http://103.146.16.148,http://103.146.16.148:1111",
+    ).split(",")
+    if origin
+]
+
 
 # Only allow CORS_ALLOW_ALL_ORIGINS in development
 if DEBUG:
@@ -291,10 +319,15 @@ CORS_ALLOW_METHODS = [
 ]
 
 # CSRF Configuration for API - Use environment variables
-CSRF_TRUSTED_ORIGINS = os.environ.get(
-    "DJANGO_CSRF_TRUSTED_ORIGINS",
-    "http://localhost,http://127.0.0.1,http://localhost:3000,http://127.0.0.1:3000,http://localhost:80,http://127.0.0.1:80,http://192.168.68.108,http://192.168.68.108:80",
-).split(",")
+CSRF_TRUSTED_ORIGINS = [
+    origin
+    for origin in os.environ.get(
+        "DJANGO_CSRF_TRUSTED_ORIGINS",
+        "http://localhost,http://127.0.0.1,http://localhost:3000,http://127.0.0.1:3000,http://103.146.16.148,http://103.146.16.148:1111",
+    ).split(",")
+    if origin
+]
+
 
 # CSRF exemption for API endpoints (since we're using JWT authentication)
 CSRF_EXEMPT_URLS = [
@@ -328,3 +361,8 @@ timezone = "Asia/Dhaka"
 
 
 redis_url = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379/0")
+
+
+# Swagger settings
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
