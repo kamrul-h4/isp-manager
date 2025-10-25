@@ -3,7 +3,7 @@ import xior from "xior"
 // const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
 
 export const httpV1 = xior.create({
-  baseURL: "https://api.mikrolink.artsensebd.com/api/v1",
+  baseURL: "/api/v1",
 })
 
 httpV1.interceptors.request.use((config) => {

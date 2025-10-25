@@ -51,25 +51,25 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
     restart: unless-stopped
 
-  celery-beat:
-    build: ./backend
-    container_name: celery-beat
-    env_file: .env
-    command: celery -A app beat -l info
-    volumes:
-      - ./backend:/app
-    networks:
-      - billing-network
-    depends_on:
-      - redis
-      - django-web
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - SECRET_KEY=${SECRET_KEY}
-      - DEBUG=${DEBUG}
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-    restart: unless-stopped
+  # celery-beat:
+  #   build: ./backend
+  #   container_name: celery-beat
+  #   env_file: .env
+  #   command: celery -A app beat -l info
+  #   volumes:
+  #     - ./backend:/app
+  #   networks:
+  #     - billing-network
+  #   depends_on:
+  #     - redis
+  #     - django-web
+  #   environment:
+  #     - DATABASE_URL=${DATABASE_URL}
+  #     - SECRET_KEY=${SECRET_KEY}
+  #     - DEBUG=${DEBUG}
+  #     - CELERY_BROKER_URL=redis://redis:6379/0
+  #     - CELERY_RESULT_BACKEND=redis://redis:6379/0
+  #   restart: unless-stopped
 
   nextjs:
     build: 
